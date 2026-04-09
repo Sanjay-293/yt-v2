@@ -1,0 +1,54 @@
+steps:
+  # Step 1: Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - gcr.io/$PROJECT_ID/yt-sentiment:$COMMIT_SHA
+      - -t
+      - gcr.io/$PROJECT_ID/yt-sentiment:latest
+      - .
+
+  # Step 2: Push commit SHA tag
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/yt-sentiment:$COMMIT_SHA']
+
+  # Step 3: Push latest tag
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/yt-sentiment:latest']
+
+  # Step 4: Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - yt-sentiment
+      - --image=gcr.io/$PROJECT_ID/yt-sentiment:$COMMIT_SHA
+      - --platform=managed
+      - --region=$_GCP_REGION
+      - --allow-unauthenticated
+      - --memory=1Gi
+      - --cpu=1
+      - --concurrency=80
+      - --min-instances=0
+      - --max-instances=10
+      - --service-account=yt-sentiment-sa@$PROJECT_ID.iam.gserviceaccount.com
+      - --set-env-vars=GCP_PROJECT=$PROJECT_ID,GCS_BUCKET=$_GCS_BUCKET,BQ_DATASET=$_BQ_DATASET,BQ_TABLE=$_BQ_TABLE
+      - --update-secrets=YOUTUBE_API_KEY=YOUTUBE_API_KEY:latest,GEMINI_API_KEY=GEMINI_API_KEY:latest
+
+images:
+  - gcr.io/$PROJECT_ID/yt-sentiment:$COMMIT_SHA
+  - gcr.io/$PROJECT_ID/yt-sentiment:latest
+
+substitutions:
+  _GCP_REGION:  us-central1
+  _GCS_BUCKET:  ${PROJECT_ID}-yt-sentiment-reports
+  _BQ_DATASET:  yt_sentiment
+  _BQ_TABLE:    comment_analysis
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_MEDIUM
+
+timeout: 1200s

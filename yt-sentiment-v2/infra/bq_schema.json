@@ -1,0 +1,17 @@
+[
+  { "name": "session_id",          "type": "STRING",    "mode": "REQUIRED" },
+  { "name": "analyzed_at",         "type": "TIMESTAMP", "mode": "REQUIRED" },
+  { "name": "video_id",            "type": "STRING",    "mode": "REQUIRED" },
+  { "name": "video_title",         "type": "STRING",    "mode": "NULLABLE" },
+  { "name": "channel",             "type": "STRING",    "mode": "NULLABLE" },
+  { "name": "comment_text",        "type": "STRING",    "mode": "NULLABLE" },
+  { "name": "author",              "type": "STRING",    "mode": "NULLABLE" },
+  { "name": "likes",               "type": "INTEGER",   "mode": "NULLABLE" },
+  { "name": "reply_count",         "type": "INTEGER",   "mode": "NULLABLE" },
+  { "name": "sentiment",           "type": "STRING",    "mode": "NULLABLE" },
+  { "name": "confidence_score",    "type": "FLOAT",     "mode": "NULLABLE" },
+  { "name": "topics",              "type": "STRING",    "mode": "NULLABLE" },
+  { "name": "reply_suggestion",    "type": "STRING",    "mode": "NULLABLE" },
+  { "name": "content_improvement", "type": "STRING",    "mode": "NULLABLE" },
+  { "name": "engagement_tip",      "type": "STRING",    "mode": "NULLABLE" }
+]
